@@ -22,9 +22,25 @@ const CreatePost = () => {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("handleSubmit activated");
+    if (!formData.title.trim()) {
+      setErrorMessage("Title is required.");
+      return;
+    }
+
+    if (!formData.secret_key.trim()) {
+      setErrorMessage("Secret key is required.");
+      return;
+    }
+
+    try {
+      await createPost(formData);
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("There was a problem creating the post.");
+    }
   };
 
   return (
