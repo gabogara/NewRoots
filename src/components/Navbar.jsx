@@ -7,9 +7,6 @@ export const Navbar = () => {
         <NavLink to="/">
           New <span>Root</span>
         </NavLink>
-
-        <NavLink to="/create">Create a</NavLink>
-
         <NavLink to="/posts/new">Create Post</NavLink>
       </nav>
     </aside>
