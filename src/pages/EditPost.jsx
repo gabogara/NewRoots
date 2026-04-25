@@ -157,10 +157,22 @@ const EditPost = () => {
 
         <button type="submit">Save Changes</button>
       </form>
+      <section>
+        <h2>Delete Post</h2>
 
-      
+        <label htmlFor="deleteSecretKey">Secret Key</label>
+        <input
+          id="deleteSecretKey"
+          type="password"
+          value={deleteSecretKey}
+          onChange={(event) => setDeleteSecretKey(event.target.value)}
+        />
+
+        <button type="button" onClick={handleDeletePost}>
+          Delete Post
+        </button>
+      </section>
     </section>
-    
   );
 };
 
