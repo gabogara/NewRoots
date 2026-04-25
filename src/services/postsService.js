@@ -62,11 +62,23 @@ const updatePostUpvotes = async (id, upvotes) => {
   return data;
 };
 
+const getReferencedPostById = async (id) => {
+  const { data, error } = await supabase
+    .from("posts")
+    .select("id, title, tag, upvotes, created_at")
+    .eq("id", id)
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
 export {
   getAllPosts,
   createPost,
   getPostById,
   updatePost,
   deletePost,
+  getReferencedPostById,
   updatePostUpvotes,
 };

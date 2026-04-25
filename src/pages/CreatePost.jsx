@@ -11,6 +11,7 @@ const CreatePost = () => {
     image: "",
     tag: "Question",
     secret_key: "",
+    referenced_post_id: "",
   });
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -35,7 +36,10 @@ const CreatePost = () => {
     }
 
     try {
-      await createPost(formData);
+      await createPost({
+        ...formData,
+        referenced_post_id: formData.referenced_post_id || null,
+      });
       navigate("/");
     } catch (error) {
       console.error(error);
@@ -98,6 +102,15 @@ const CreatePost = () => {
           value={formData.secret_key}
           onChange={handleChange}
           required
+        />
+        <label htmlFor="referenced_post_id">Referenced Post ID</label>
+        <input
+          id="referenced_post_id"
+          name="referenced_post_id"
+          type="number"
+          value={formData.referenced_post_id}
+          onChange={handleChange}
+          placeholder="Optional"
         />
 
         <button type="submit">Create Post</button>

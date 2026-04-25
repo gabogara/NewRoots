@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-import { getPostById, updatePostUpvotes } from "../services/postsService";
+import {
+  getPostById,
+  updatePostUpvotes,
+  getReferencedPostById,
+} from "../services/postsService";
 import {
   getCommentsByPostId,
   createComment,
@@ -15,6 +19,7 @@ const PostDetail = () => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState("");
   const [commentSecretKey, setCommentSecretKey] = useState("");
+  const [referencedPost, setReferencedPost] = useState(null);
 
   const handleUpvote = async () => {
     try {
@@ -25,31 +30,38 @@ const PostDetail = () => {
     }
   };
 
-const handleCreateComment = async (event) => {
-  event.preventDefault();
+  const handleCreateComment = async (event) => {
+    event.preventDefault();
 
-  if (!commentText.trim() || !commentSecretKey.trim()) return;
+    if (!commentText.trim() || !commentSecretKey.trim()) return;
 
-  try {
-    const newComment = await createComment({
-      post_id: id,
-      text: commentText,
-      secret_key: commentSecretKey,
-    });
+    try {
+      const newComment = await createComment({
+        post_id: id,
+        text: commentText,
+        secret_key: commentSecretKey,
+      });
 
-    setComments([...comments, newComment]);
-    setCommentText("");
-    setCommentSecretKey("");
-  } catch (error) {
-    console.error(error);
-  }
-};
+      setComments([...comments, newComment]);
+      setCommentText("");
+      setCommentSecretKey("");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const loadPost = async () => {
       try {
         const postData = await getPostById(id);
         setPost(postData);
+        setReferencedPost(null);
+        if (postData.referenced_post_id) {
+          const referencedData = await getReferencedPostById(
+            postData.referenced_post_id
+          );
+          setReferencedPost(referencedData);
+        }
         const commentsData = await getCommentsByPostId(id);
         setComments(commentsData);
       } catch (error) {
@@ -78,6 +90,15 @@ const handleCreateComment = async (event) => {
       <p>{post.tag || "General"}</p>
 
       <h1>{post.title}</h1>
+
+      {referencedPost && (
+        <article>
+          <h2>Referenced Post</h2>
+          <Link to={`/posts/${referencedPost.id}`}>{referencedPost.title}</Link>
+          <p>{referencedPost.tag}</p>
+          <p>Upvotes: {referencedPost.upvotes}</p>
+        </article>
+      )}
 
       {post.content && <p>{post.content}</p>}
 
