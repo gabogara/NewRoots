@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import { getPostById, updatePostUpvotes } from "../services/postsService";
+import {
+  getCommentsByPostId,
+  createComment,
+} from "../services/commentsService";
 
 const PostDetail = () => {
   const { id } = useParams();
@@ -8,6 +12,9 @@ const PostDetail = () => {
   const [post, setPost] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [comments, setComments] = useState([]);
+  const [commentText, setCommentText] = useState("");
+  const [commentSecretKey, setCommentSecretKey] = useState("");
 
   const handleUpvote = async () => {
     try {
@@ -18,11 +25,33 @@ const PostDetail = () => {
     }
   };
 
+const handleCreateComment = async (event) => {
+  event.preventDefault();
+
+  if (!commentText.trim() || !commentSecretKey.trim()) return;
+
+  try {
+    const newComment = await createComment({
+      post_id: id,
+      text: commentText,
+      secret_key: commentSecretKey,
+    });
+
+    setComments([...comments, newComment]);
+    setCommentText("");
+    setCommentSecretKey("");
+  } catch (error) {
+    console.error(error);
+  }
+};
+
   useEffect(() => {
     const loadPost = async () => {
       try {
         const postData = await getPostById(id);
         setPost(postData);
+        const commentsData = await getCommentsByPostId(id);
+        setComments(commentsData);
       } catch (error) {
         console.error(error);
         setErrorMessage("Post not found.");
@@ -67,6 +96,39 @@ const PostDetail = () => {
       <p>Upvotes: {post.upvotes}</p>
 
       <Link to={`/posts/${post.id}/edit`}>Edit Post</Link>
+      <section>
+        <h2>Comments</h2>
+
+        {comments.length === 0 ? (
+          <p>No comments yet. Be the first to reply.</p>
+        ) : (
+          comments.map((comment) => (
+            <article key={comment.id}>
+              <p>{comment.text}</p>
+              <small>{new Date(comment.created_at).toLocaleString()}</small>
+            </article>
+          ))
+        )}
+
+        <form onSubmit={handleCreateComment}>
+          <label htmlFor="commentText">Add a comment</label>
+          <textarea
+            id="commentText"
+            value={commentText}
+            onChange={(event) => setCommentText(event.target.value)}
+          />
+
+          <label htmlFor="commentSecretKey">Secret Key</label>
+          <input
+            id="commentSecretKey"
+            type="password"
+            value={commentSecretKey}
+            onChange={(event) => setCommentSecretKey(event.target.value)}
+          />
+
+          <button type="submit">Add Comment</button>
+        </form>
+      </section>
     </section>
   );
 };
