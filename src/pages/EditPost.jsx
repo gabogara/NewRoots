@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router";
-import { getPostById, updatePost } from "../services/postsService";
+import { getPostById, updatePost, deletePost } from "../services/postsService";
 
 const EditPost = () => {
   const { id } = useParams();
@@ -17,6 +17,22 @@ const EditPost = () => {
   const [secretKeyInput, setSecretKeyInput] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [deleteSecretKey, setDeleteSecretKey] = useState("");
+
+  const handleDeletePost = async () => {
+    if (deleteSecretKey !== originalPost.secret_key) {
+      setErrorMessage("Incorrect secret key.");
+      return;
+    }
+
+    try {
+      await deletePost(id);
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      setErrorMessage("There was a problem deleting the post.");
+    }
+  };
 
   useEffect(() => {
     const loadPost = async () => {
@@ -141,7 +157,10 @@ const EditPost = () => {
 
         <button type="submit">Save Changes</button>
       </form>
+
+      
     </section>
+    
   );
 };
 

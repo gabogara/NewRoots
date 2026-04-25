@@ -44,6 +44,12 @@ const updatePost = async (id, updatedPost) => {
   return data;
 };
 
+const deletePost = async (id) => {
+  const { error } = await supabase.from("posts").delete().eq("id", id);
+
+  if (error) throw error;
+};
+
 const updatePostUpvotes = async (id, upvotes) => {
   const { data, error } = await supabase
     .from("posts")
@@ -56,4 +62,11 @@ const updatePostUpvotes = async (id, upvotes) => {
   return data;
 };
 
-export { getAllPosts, createPost, getPostById, updatePost, updatePostUpvotes };
+export {
+  getAllPosts,
+  createPost,
+  getPostById,
+  updatePost,
+  deletePost,
+  updatePostUpvotes,
+};
