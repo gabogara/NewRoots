@@ -76,7 +76,12 @@ const PostDetail = () => {
   }, [id]);
 
   if (isLoading) {
-    return <p>Loading post...</p>;
+    return (
+      <section>
+        <p>No comments yet.</p>
+        <p>Be the first to share your experience.</p>
+      </section>
+    );
   }
 
   if (errorMessage) {

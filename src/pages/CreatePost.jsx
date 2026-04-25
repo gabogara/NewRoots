@@ -9,12 +9,14 @@ const CreatePost = () => {
     title: "",
     content: "",
     image: "",
+    video_url: "",
     tag: "Question",
     secret_key: "",
     referenced_post_id: "",
   });
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (event) => {
     setFormData({
@@ -25,6 +27,8 @@ const CreatePost = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setErrorMessage("");
+    
     if (!formData.title.trim()) {
       setErrorMessage("Title is required.");
       return;
@@ -36,6 +40,7 @@ const CreatePost = () => {
     }
 
     try {
+      setIsSubmitting(true);
       await createPost({
         ...formData,
         referenced_post_id: formData.referenced_post_id || null,
@@ -44,6 +49,8 @@ const CreatePost = () => {
     } catch (error) {
       console.error(error);
       setErrorMessage("There was a problem creating the post.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -77,6 +84,14 @@ const CreatePost = () => {
           name="image"
           type="url"
           value={formData.image}
+          onChange={handleChange}
+        />
+        <label htmlFor="video_url">Video URL</label>
+        <input
+          id="video_url"
+          name="video_url"
+          type="url"
+          value={formData.video_url}
           onChange={handleChange}
         />
 
@@ -113,7 +128,9 @@ const CreatePost = () => {
           placeholder="Optional"
         />
 
-        <button type="submit">Create Post</button>
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Creating..." : "Create Post"}
+        </button>
       </form>
     </section>
   );

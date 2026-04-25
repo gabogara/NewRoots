@@ -41,7 +41,12 @@ const Home = () => {
     });
 
   if (isLoading) {
-    return <p>Loading community posts...</p>;
+    return (
+      <section>
+        <h1>NewRoots Community</h1>
+        <p>Loading community posts...</p>
+      </section>
+    );
   }
 
   return (
@@ -82,7 +87,10 @@ const Home = () => {
       </section>
 
       {filteredPosts.length === 0 ? (
-        <p>No posts yet. Be the first to share something.</p>
+        <section>
+          <p>No posts found.</p>
+          <p>Try a different search or be the first to create a post.</p>
+        </section>
       ) : (
         filteredPosts.map((post) => <PostCard key={post.id} post={post} />)
       )}
