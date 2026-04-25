@@ -32,4 +32,16 @@ const getPostById = async (id) => {
   return data;
 };
 
-export { getAllPosts, createPost, getPostById };
+const updatePostUpvotes = async (id, upvotes) => {
+  const { data, error } = await supabase
+    .from("posts")
+    .update({ upvotes })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
+export { getAllPosts, createPost, getPostById, updatePostUpvotes };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
-import { getPostById } from "../services/postsService";
+import { getPostById, updatePostUpvotes } from "../services/postsService";
 
 const PostDetail = () => {
   const { id } = useParams();
@@ -8,6 +8,15 @@ const PostDetail = () => {
   const [post, setPost] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const handleUpvote = async () => {
+    try {
+      const updatedPost = await updatePostUpvotes(id, post.upvotes + 1);
+      setPost(updatedPost);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const loadPost = async () => {
@@ -54,6 +63,7 @@ const PostDetail = () => {
         </p>
       )}
 
+      <button onClick={handleUpvote}>Upvote</button>
       <p>Upvotes: {post.upvotes}</p>
 
       <Link to={`/posts/${post.id}/edit`}>Edit Post</Link>
