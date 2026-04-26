@@ -66,7 +66,8 @@ const CreatePost = () => {
     const loadAvailablePosts = async () => {
       try {
         const posts = await getAllPosts();
-        setAvailablePosts(posts);
+        const sortedPosts = posts.sort((a, b) => a.id - b.id);
+        setAvailablePosts(sortedPosts);
       } catch (error) {
         console.error(error);
         setErrorMessage("There was a problem loading available posts.");
