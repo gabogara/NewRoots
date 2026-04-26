@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { createPost } from "../services/postsService";
+import { createPost, getAllPosts } from "../services/postsService";
 
 const CreatePost = () => {
   const navigate = useNavigate();
@@ -17,6 +17,7 @@ const CreatePost = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [availablePosts, setAvailablePosts] = useState([]);
 
   const handleChange = (event) => {
     setFormData({
@@ -28,7 +29,7 @@ const CreatePost = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage("");
-    
+
     if (!formData.title.trim()) {
       setErrorMessage("Title is required.");
       return;
@@ -48,11 +49,32 @@ const CreatePost = () => {
       navigate("/");
     } catch (error) {
       console.error(error);
-      setErrorMessage("There was a problem creating the post.");
+
+      if (error.code === "23503") {
+        setErrorMessage(
+          "The referenced post does not exist. Please choose a valid post."
+        );
+      } else {
+        setErrorMessage("There was a problem creating the post.");
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    const loadAvailablePosts = async () => {
+      try {
+        const posts = await getAllPosts();
+        setAvailablePosts(posts);
+      } catch (error) {
+        console.error(error);
+        setErrorMessage("There was a problem loading available posts.");
+      }
+    };
+
+    loadAvailablePosts();
+  }, []);
 
   return (
     <section>
@@ -118,15 +140,21 @@ const CreatePost = () => {
           onChange={handleChange}
           required
         />
-        <label htmlFor="referenced_post_id">Referenced Post ID</label>
-        <input
+        <label htmlFor="referenced_post_id">Referenced Post</label>
+        <select
           id="referenced_post_id"
           name="referenced_post_id"
-          type="number"
           value={formData.referenced_post_id}
           onChange={handleChange}
-          placeholder="Optional"
-        />
+        >
+          <option value="">No referenced post</option>
+
+          {availablePosts.map((post) => (
+            <option key={post.id} value={post.id}>
+              #{post.id} - {post.title}
+            </option>
+          ))}
+        </select>
 
         <button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Creating..." : "Create Post"}
