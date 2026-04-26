@@ -4,10 +4,12 @@ export const Navbar = () => {
   return (
     <aside>
       <nav>
-        <NavLink to="/">
+        <NavLink className="brand-link" to="/">
           New <span>Root</span>
         </NavLink>
-        <NavLink to="/posts/new">Create Post</NavLink>
+        <NavLink className="create-post-button" to="/posts/new">
+          Create Post
+        </NavLink>
       </nav>
     </aside>
   );

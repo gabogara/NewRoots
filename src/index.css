@@ -114,3 +114,26 @@ small,
     margin: 16px auto;
   }
 }
+
+.brand-link {
+  font-size: 1.3rem;
+}
+
+.brand-link span {
+  color: #f4c95d;
+}
+
+.create-post-button {
+  background-color: #f4c95d;
+  color: #222;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: bold;
+  transition: 0.2s ease;
+}
+
+.create-post-button:hover {
+  background-color: #ffd978;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
