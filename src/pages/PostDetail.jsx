@@ -8,6 +8,7 @@ import {
 import {
   getCommentsByPostId,
   createComment,
+  deleteComment,
 } from "../services/commentsService";
 
 const PostDetail = () => {
@@ -20,6 +21,23 @@ const PostDetail = () => {
   const [commentText, setCommentText] = useState("");
   const [commentSecretKey, setCommentSecretKey] = useState("");
   const [referencedPost, setReferencedPost] = useState(null);
+  const [commentDeleteKeys, setCommentDeleteKeys] = useState({});
+
+const handleDeleteComment = async (commentId, commentSecretKey) => {
+  if (commentDeleteKeys[commentId] !== commentSecretKey) {
+    setErrorMessage("Incorrect comment secret key.");
+    return;
+  }
+
+  try {
+    await deleteComment(commentId);
+    setComments(comments.filter((comment) => comment.id !== commentId));
+    setErrorMessage("");
+  } catch (error) {
+    console.error(error);
+    setErrorMessage("There was a problem deleting the comment.");
+  }
+};
 
   const handleUpvote = async () => {
     try {
@@ -132,6 +150,26 @@ const PostDetail = () => {
             <article key={comment.id}>
               <p>{comment.text}</p>
               <small>{new Date(comment.created_at).toLocaleString()}</small>
+              <input
+                type="password"
+                placeholder="Secret key"
+                value={commentDeleteKeys[comment.id] || ""}
+                onChange={(event) =>
+                  setCommentDeleteKeys({
+                    ...commentDeleteKeys,
+                    [comment.id]: event.target.value,
+                  })
+                }
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleDeleteComment(comment.id, comment.secret_key)
+                }
+              >
+                Delete Comment
+              </button>
             </article>
           ))
         )}

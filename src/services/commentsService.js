@@ -22,4 +22,10 @@ const createComment = async (comment) => {
   return data;
 };
 
-export { getCommentsByPostId, createComment };
+const deleteComment = async (id) => {
+  const { error } = await supabase.from("comments").delete().eq("id", id);
+
+  if (error) throw error;
+};
+
+export { getCommentsByPostId, createComment, deleteComment };
