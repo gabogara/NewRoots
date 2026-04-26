@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllPosts } from "../services/postsService";
-import PostCard from "../components/ PostCard";
+import PostCard from "../components/PostCard";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -57,7 +57,7 @@ const Home = () => {
         experiences.
       </p>
 
-      <section>
+      <section className="feed-controls">
         <input
           type="text"
           placeholder="Search posts by title..."
